@@ -1,6 +1,7 @@
 .banner-container {
     background-image: url('../../../images/bg/banner-bg.jpg');
-    min-height: 100vh;
+    min-height: 100%;
+    padding: 10px 0;
     min-width: 286px;
     width: 100%;
     background-repeat: no-repeat;

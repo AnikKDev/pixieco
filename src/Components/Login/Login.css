@@ -1,0 +1,22 @@
+.form-container {
+    min-height: calc(100vh - 90px);
+    background-color: #1B1B1B;
+}
+
+.input-container {
+    background-color: #58585877;
+    /* height: 400px; */
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.login-btn {
+    border: 2px solid white;
+    color: #1B1B1B;
+    font-size: 1.2em;
+    font-weight: 500;
+    width: 30%;
+    border-radius: 30px;
+    padding: 5px 0;
+}
