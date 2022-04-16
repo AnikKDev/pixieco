@@ -1,0 +1,30 @@
+.service-card {
+    background-color: #58585877;
+    color: white;
+    box-shadow: grey 0px 3px 16px -2px;
+    border-radius: 20% 0 20% 0;
+}
+
+.service-img {
+    border-radius: 25% 0 25% 0;
+    height: 200px;
+}
+
+.checkout-btn {
+    outline: none;
+    border: none;
+    padding: 7px 12px;
+    font-size: 1.2em;
+    background-color: whitesmoke;
+    color: black;
+    font-weight: 500;
+    transition: 0.3s;
+    border-radius: 10px;
+    width: 70%;
+
+}
+
+.checkout-btn:hover {
+    color: white;
+    background-color: #1B1B1B;
+}
