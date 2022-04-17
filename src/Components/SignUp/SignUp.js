@@ -23,7 +23,7 @@ const SignUp = () => {
     const handlePasswordChange = e => {
         setPassword(e.target.value)
     };
-    // get email
+    // get confirm password
     const handleConfirmPasswordChange = e => {
         setConfirmPassword(e.target.value)
     };

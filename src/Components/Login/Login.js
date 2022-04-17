@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import './Login.css';
+import auth from '../../firebase.init';
 const Login = () => {
     const navigate = useNavigate();
     // form validation
     const [validated, setValidated] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [
+        signInWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useSignInWithEmailAndPassword(auth);
+
+    // get email
+    const handleEmailChange = e => {
+        setEmail(e.target.value)
+    };
+    // get password
+    const handlePasswordChange = e => {
+        setPassword(e.target.value)
+    };
+
+    if (user) {
+        navigate('/');
+    }
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -16,6 +42,8 @@ const Login = () => {
         }
 
         setValidated(true);
+
+        signInWithEmailAndPassword(email, password)
     };
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
@@ -24,7 +52,7 @@ const Login = () => {
                 <Form noValidate validated={validated} onSubmit={handleSubmit} className='input-container'>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control required type="email" placeholder="Enter email" />
+                        <Form.Control onChange={handleEmailChange} required type="email" placeholder="Enter email" />
                         <Form.Control.Feedback type="invalid">
                             Email can't be empty
                         </Form.Control.Feedback>
@@ -33,7 +61,7 @@ const Login = () => {
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control required type="password" placeholder="Password" />
+                        <Form.Control onChange={handlePasswordChange} required type="password" placeholder="Password" />
                     </Form.Group>
                     <Button variant="link text-white fs-5">Forgot password?</Button>
 
