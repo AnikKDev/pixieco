@@ -1,0 +1,19 @@
+.google-btn {
+    border: 2px solid white;
+    color: #1B1B1B;
+    font-size: 1.2em;
+    font-weight: 500;
+    width: 30%;
+    border-radius: 30px 0 0 30px;
+    padding: 5px 0;
+}
+
+.github-btn {
+    border: 2px solid white;
+    color: #1B1B1B;
+    font-size: 1.2em;
+    font-weight: 500;
+    width: 30%;
+    border-radius: 0 30px 30px 0px;
+    padding: 5px 0;
+}
