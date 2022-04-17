@@ -1,32 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSignInWithEmailAndPassword, useSendPasswordResetEmail } from 'react-firebase-hooks/auth';
 import './Login.css';
 import auth from '../../firebase.init';
+import Loading from '../../RequireAuth/Loading/Loading';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     // form validation
+    const [userInfo, setUserInfo] = useState({
+        email: "",
+        password: ""
+    });
+
+    const [errors, setErrors] = useState({
+        email: "",
+        password: "",
+        others: ""
+    });
+
+
+
     const [validated, setValidated] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [password, setPassword] = useState('');
+    // const [error, setError] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [
         signInWithEmailAndPassword,
         user,
         loading,
-        error,
+        signInError,
     ] = useSignInWithEmailAndPassword(auth);
+
+    const [sendPasswordResetEmail, sending, resetError] = useSendPasswordResetEmail(auth);
 
     // get email
     const handleEmailChange = e => {
-        setEmail(e.target.value)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(e.target.value)) {
+            setUserInfo({ ...userInfo, email: e.target.value });
+            setErrors('');
+        } else {
+            setErrors({ ...errors, email: 'Please Provide a valid email' })
+        }
+
     };
     // get password
     const handlePasswordChange = e => {
-        setPassword(e.target.value)
+        setUserInfo({ ...userInfo, password: e.target.value })
     };
 
     const from = location.state?.from?.pathname || "/";
@@ -34,6 +61,24 @@ const Login = () => {
     if (user) {
         navigate(from, { replace: true });
     }
+    if (loading) {
+        <Loading></Loading>
+    };
+    useEffect(() => {
+        if (signInError) {
+            // toast(signInError?.message)
+            switch (signInError?.code) {
+                case "auth/user-not-found":
+                    toast("User not found");
+                    break;
+                case "auth/wrong-password":
+                    toast("Wrong password");
+                    break;
+                default:
+                    toast("Something went wrong. Please try again later.")
+            }
+        }
+    }, [signInError])
 
 
     const handleSubmit = (event) => {
@@ -46,8 +91,9 @@ const Login = () => {
 
         setValidated(true);
 
-        signInWithEmailAndPassword(email, password)
+        signInWithEmailAndPassword(userInfo.email, userInfo.password)
     };
+
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
 
@@ -59,6 +105,7 @@ const Login = () => {
                         <Form.Control.Feedback type="invalid">
                             Email can't be empty
                         </Form.Control.Feedback>
+                        {errors?.email && <p className="text-danger">{errors.email}</p>}
 
                     </Form.Group>
 
@@ -66,7 +113,10 @@ const Login = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control onChange={handlePasswordChange} required type="password" placeholder="Password" />
                     </Form.Group>
-                    <Button variant="link text-white fs-5">Forgot password?</Button>
+                    <Button onClick={async () => {
+                        await sendPasswordResetEmail(userInfo.email);
+                        alert('Sent email');
+                    }} variant="link text-white fs-5">Forgot password?</Button>
 
                     <button className="d-block mx-auto login-btn" type="submit">
                         Login
@@ -81,6 +131,7 @@ const Login = () => {
                     <button className="d-block mx-auto login-btn" type="submit">
                         Login
                     </button> */}
+                    <ToastContainer></ToastContainer>
 
                 </Form>
             </div>

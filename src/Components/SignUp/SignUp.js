@@ -1,39 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 import auth from '../../firebase.init';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { sendEmailVerification } from 'firebase/auth';
+import Loading from '../../RequireAuth/Loading/Loading';
+import { toast } from 'react-toastify';
 const SignUp = () => {
     const navigate = useNavigate();
     // form validation
     const [validated, setValidated] = useState(false);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+
+
+    const [userInfo, setUserInfo] = useState({
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+    const [errors, setErrors] = useState({
+        email: "",
+        password: "",
+        others: ""
+    });
+
+    // const [email, setEmail] = useState('');
+    // const [password, setPassword] = useState('');
+    // const [confirmPassword, setConfirmPassword] = useState('');
 
 
     // get email
     const handleEmailChange = e => {
-        setEmail(e.target.value)
+        setUserInfo({ ...userInfo, email: e.target.value })
     };
     // get password
     const handlePasswordChange = e => {
-        setPassword(e.target.value)
+        setUserInfo({ ...userInfo, password: e.target.value })
     };
     // get confirm password
     const handleConfirmPasswordChange = e => {
-        setConfirmPassword(e.target.value)
+        setUserInfo({ ...userInfo, confirmPassword: e.target.value })
     };
     const [
         createUserWithEmailAndPassword,
         user,
         loading,
-        error,
+        signUpError,
     ] = useCreateUserWithEmailAndPassword(auth, { sendEmailVerification: true });
 
+    if (loading) {
+        <Loading></Loading>
+    };
+
+    // useEffect(() => {
+    //     if (signUpError) {
+    //         // toast(signInError?.message)
+    //         switch (signUpError?.code) {
+    //             case "auth/user-not-found":
+    //                 toast("User not found");
+    //                 break;
+    //             case "auth/wrong-password":
+    //                 toast("Wrong password");
+    //                 break;
+    //             default:
+    //                 toast("Something went wrong. Please try again later.")
+    //         }
+    //     }
+    // }, [signUpError])
     if (user) {
         navigate('/');
     };
@@ -47,7 +81,7 @@ const SignUp = () => {
 
         setValidated(true);
 
-        createUserWithEmailAndPassword(email, password)
+        createUserWithEmailAndPassword(userInfo.email, userInfo.password)
 
 
     };
