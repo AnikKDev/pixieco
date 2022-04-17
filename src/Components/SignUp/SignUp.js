@@ -3,10 +3,10 @@ import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 import auth from '../../firebase.init';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithGithub, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { sendEmailVerification } from 'firebase/auth';
 import Loading from '../../RequireAuth/Loading/Loading';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 const SignUp = () => {
     const navigate = useNavigate();
     // form validation
@@ -32,7 +32,13 @@ const SignUp = () => {
 
     // get email
     const handleEmailChange = e => {
-        setUserInfo({ ...userInfo, email: e.target.value })
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(e.target.value)) {
+            setUserInfo({ ...userInfo, email: e.target.value });
+            setErrors('');
+        } else {
+            setErrors({ ...errors, email: 'Please Provide a valid email' })
+        }
     };
     // get password
     const handlePasswordChange = e => {
@@ -40,7 +46,12 @@ const SignUp = () => {
     };
     // get confirm password
     const handleConfirmPasswordChange = e => {
-        setUserInfo({ ...userInfo, confirmPassword: e.target.value })
+        if (e.target.value === userInfo.password) {
+            setUserInfo({ ...userInfo, confirmPassword: e.target.value });
+            setErrors({ ...errors, password: "" });
+        } else {
+            setErrors({ ...errors, password: "Password didn't match" })
+        }
     };
     const [
         createUserWithEmailAndPassword,
@@ -52,25 +63,14 @@ const SignUp = () => {
     if (loading) {
         <Loading></Loading>
     };
-
-    // useEffect(() => {
-    //     if (signUpError) {
-    //         // toast(signInError?.message)
-    //         switch (signUpError?.code) {
-    //             case "auth/user-not-found":
-    //                 toast("User not found");
-    //                 break;
-    //             case "auth/wrong-password":
-    //                 toast("Wrong password");
-    //                 break;
-    //             default:
-    //                 toast("Something went wrong. Please try again later.")
-    //         }
-    //     }
-    // }, [signUpError])
-    if (user) {
-        navigate('/');
+    if (signUpError) {
+        toast(signUpError.message, { toastId: 'error1' })
     };
+    useEffect(() => {
+        if (user) {
+            navigate('/');
+        };
+    }, [user]);
     const handleSignup = (event) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -85,8 +85,32 @@ const SignUp = () => {
 
 
     };
+    const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
+
+    const handleGoogleSignIn = () => {
+        signInWithGoogle();
+
+    };
+    useEffect(() => {
+        if (googleUser) {
+            navigate('/');
+        };
+    }, [googleUser]);
+
+
+    const [signInWithGithub, githubUser, githubLoading, githubError] = useSignInWithGithub(auth);
+
+    const handleGithubSignIn = () => {
+        signInWithGithub();
+    };
+    useEffect(() => {
+        if (githubUser) {
+            navigate('/');
+        }
+    }, [githubUser]);
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
+
 
             <div className="w-50">
                 <Form noValidate validated={validated} onSubmit={handleSignup} className='input-container'>
@@ -105,9 +129,10 @@ const SignUp = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="ConfirmformBasicPassword">
                         <Form.Label>Confirm Password</Form.Label>
-                        <Form.Control onChange={handleConfirmPasswordChange} required type="password" placeholder="Password" />
+                        <Form.Control onChange={handleConfirmPasswordChange} required type="password" placeholder="Confirm password" />
+                        {errors?.password && <p className="text-danger">{errors.password}</p>}
                     </Form.Group>
-                    <Button variant="link text-white fs-5">Forgot password?</Button>
+
 
                     <button className="d-block mx-auto login-btn" type="submit">
                         Signup
@@ -119,19 +144,22 @@ const SignUp = () => {
                         <h5 className="mx-2">Or</h5>
                         <div className="or-line"></div>
                     </div>
-                    <div className="d-flex justify-content-center">
-                        <button className="google-btn me2" >
-                            Google
-                        </button>
-                        <button className="github-btn ms-2" >
-                            Github
-                        </button>
-                    </div>
+
 
                 </Form>
+                <div className="d-flex justify-content-center">
+                    <button onClick={handleGoogleSignIn} className="google-btn me2" >
+                        Google
+                    </button>
+                    <button onClick={handleGithubSignIn} className="github-btn ms-2" >
+                        Github
+                    </button>
+                </div>
             </div>
 
+            <ToastContainer></ToastContainer>
         </div>
+
     );
 };
 

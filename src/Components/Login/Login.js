@@ -6,7 +6,6 @@ import './Login.css';
 import auth from '../../firebase.init';
 import Loading from '../../RequireAuth/Loading/Loading';
 import { ToastContainer, toast } from 'react-toastify';
-
 import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
     const navigate = useNavigate();
@@ -29,7 +28,7 @@ const Login = () => {
     // const [email, setEmail] = useState('');
     // const [password, setPassword] = useState('');
     // const [error, setError] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    // const [confirmPassword, setConfirmPassword] = useState('');
 
     const [
         signInWithEmailAndPassword,
@@ -64,18 +63,19 @@ const Login = () => {
     if (loading) {
         <Loading></Loading>
     };
+
     useEffect(() => {
         if (signInError) {
             // toast(signInError?.message)
             switch (signInError?.code) {
                 case "auth/user-not-found":
-                    toast("User not found");
+                    toast("User not found", { toastId: 'error2' });
                     break;
                 case "auth/wrong-password":
-                    toast("Wrong password");
+                    toast("Wrong password", { toastId: 'error3' });
                     break;
                 default:
-                    toast("Something went wrong. Please try again later.")
+                    toast("Something went wrong. Please try again later.", { toastId: 'error4' })
             }
         }
     }, [signInError])
@@ -93,6 +93,23 @@ const Login = () => {
 
         signInWithEmailAndPassword(userInfo.email, userInfo.password)
     };
+
+    const handleResetPassword = async () => {
+        await sendPasswordResetEmail(userInfo?.email);
+        toast('Reset email has been sent', { toastId: 'success1' })
+    };
+    useEffect(() => {
+        if (resetError) {
+            switch (resetError?.code) {
+                case "auth/missing-email":
+                    setErrors({ ...errors, email: "Missing email" });
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }, [resetError]);
 
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
@@ -113,24 +130,13 @@ const Login = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control onChange={handlePasswordChange} required type="password" placeholder="Password" />
                     </Form.Group>
-                    <Button onClick={async () => {
-                        await sendPasswordResetEmail(userInfo.email);
-                        alert('Sent email');
-                    }} variant="link text-white fs-5">Forgot password?</Button>
+                    <Button onClick={handleResetPassword} variant="link text-white fs-5">Forgot password?</Button>
 
                     <button className="d-block mx-auto login-btn" type="submit">
                         Login
                     </button>
                     <div className="d-flex align-items-center"><p className="text-white mb-0">Don't have an account?</p>
                         <Button onClick={() => navigate('/signup')} variant="link text-white">Signup</Button></div>
-                    {/* <div className="or-line-container d-flex justify-content-center align-items-center mx-4">
-                        <div className="or-line"></div>
-                        <h5 className="mx-2">Or</h5>
-                        <div className="or-line"></div>
-                    </div>
-                    <button className="d-block mx-auto login-btn" type="submit">
-                        Login
-                    </button> */}
                     <ToastContainer></ToastContainer>
 
                 </Form>
