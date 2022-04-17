@@ -1,7 +1,10 @@
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import './Service.css';
+
 const Service = ({ service }) => {
+    const navigate = useNavigate();
     const { img, name, price, description } = service;
     return (
         <div className='col-md-6 mb-5 d-flex justify-content-center '>
@@ -13,7 +16,7 @@ const Service = ({ service }) => {
                         {description}
                     </Card.Text>
                     <h3 className='text-muted'>${price}</h3>
-                    <button className="checkout-btn d-block  mx-auto">Checkout</button>
+                    <button onClick={() => navigate('/checkout')} className="checkout-btn d-block  mx-auto">Checkout</button>
                 </Card.Body>
             </Card>
         </div>
