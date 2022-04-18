@@ -1,0 +1,15 @@
+.image-container {
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: black 0px 13px 21px;
+}
+
+.image-container img {
+    transition: transform 0.4s ease;
+    transform-origin: 50% 50%;
+
+}
+
+.image-container:hover img {
+    transform: scale(1.1);
+}

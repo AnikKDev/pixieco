@@ -2,7 +2,7 @@ import React from 'react';
 
 const About = () => {
     return (
-        <div>
+        <div style={{ minHeight: "80vh" }}>
             about
         </div>
     );

@@ -1,0 +1,11 @@
+.footer-container {
+    background-color: #191919;
+    padding: 40px;
+    margin-top: 90px;
+
+}
+
+.footer-para,
+.contact-info p {
+    color: #999799;
+}

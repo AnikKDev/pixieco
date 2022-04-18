@@ -1,0 +1,14 @@
+.blog-title {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.blog-title::after {
+    content: "";
+    height: 3px;
+    width: 100%;
+    background-color: black;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
