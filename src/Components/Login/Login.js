@@ -154,7 +154,7 @@ const Login = () => {
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
 
-            <div className="w-50">
+            <div className="w-md-50 w-100 mx-2">
                 <div className='input-container my-5'>
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
