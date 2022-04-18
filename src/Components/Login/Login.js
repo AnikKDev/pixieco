@@ -46,7 +46,8 @@ const Login = () => {
             setUserInfo({ ...userInfo, email: e.target.value });
             setErrors('');
         } else {
-            setErrors({ ...errors, email: 'Please Provide a valid email' })
+            setErrors({ ...errors, email: 'Please Provide a valid email' });
+            setUserInfo({ ...userInfo, email: '' });
         }
 
     };
@@ -95,8 +96,12 @@ const Login = () => {
     };
 
     const handleResetPassword = async () => {
-        await sendPasswordResetEmail(userInfo?.email);
-        toast('Reset email has been sent', { toastId: 'success1' })
+        if (userInfo.email) {
+            await sendPasswordResetEmail(userInfo?.email);
+            toast('Reset email has been sent', { toastId: 'success1' })
+        } else {
+            setErrors({ ...errors, email: 'Please Provide a valid email' });
+        }
     };
     useEffect(() => {
         if (resetError) {
