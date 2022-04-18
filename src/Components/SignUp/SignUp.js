@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 import auth from '../../firebase.init';
 import { useCreateUserWithEmailAndPassword, useSignInWithGithub, useSignInWithGoogle } from 'react-firebase-hooks/auth';
-import { sendEmailVerification } from 'firebase/auth';
 import Loading from '../../RequireAuth/Loading/Loading';
 import { toast, ToastContainer } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
+import { BsGoogle, BsGithub } from 'react-icons/bs';
 const SignUp = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     // form validation
     const [validated, setValidated] = useState(false);
@@ -24,12 +26,6 @@ const SignUp = () => {
         password: "",
         others: ""
     });
-
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
-    // const [confirmPassword, setConfirmPassword] = useState('');
-
-
     // get email
     const handleEmailChange = e => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -53,6 +49,7 @@ const SignUp = () => {
             setErrors({ ...errors, password: "Password didn't match" })
         }
     };
+    // sign up with mail and password
     const [
         createUserWithEmailAndPassword,
         user,
@@ -66,11 +63,14 @@ const SignUp = () => {
     if (signUpError) {
         toast(signUpError.message, { toastId: 'error1' })
     };
+    // redirect user
+    const from = location.state?.from?.pathname || "/";
     useEffect(() => {
         if (user) {
-            navigate('/');
+            navigate(from, { replace: true });
         };
-    }, [user]);
+    }, [user, navigate, from]);
+    // signup form
     const handleSignup = (event) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -85,6 +85,8 @@ const SignUp = () => {
 
 
     };
+
+    // google sign in
     const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
 
     const handleGoogleSignIn = () => {
@@ -93,11 +95,11 @@ const SignUp = () => {
     };
     useEffect(() => {
         if (googleUser) {
-            navigate('/');
+            navigate(from, { replace: true });
         };
-    }, [googleUser]);
+    }, [googleUser, navigate, from]);
 
-
+    // github sign in
     const [signInWithGithub, githubUser, githubLoading, githubError] = useSignInWithGithub(auth);
 
     const handleGithubSignIn = () => {
@@ -105,56 +107,59 @@ const SignUp = () => {
     };
     useEffect(() => {
         if (githubUser) {
-            navigate('/');
+            navigate(from, { replace: true });
         }
-    }, [githubUser]);
+    }, [githubUser, navigate, from]);
     return (
         <div className='mx-auto form-container d-flex justify-content-center align-items-center'>
 
 
             <div className="w-50">
-                <Form noValidate validated={validated} onSubmit={handleSignup} className='input-container'>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control onChange={handleEmailChange} required type="email" placeholder="Enter email" />
-                        <Form.Control.Feedback type="invalid">
-                            Email can't be empty
-                        </Form.Control.Feedback>
+                <div className='input-container my-5'>
+                    <Form noValidate validated={validated} onSubmit={handleSignup} >
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control onChange={handleEmailChange} required type="email" placeholder="Enter email" />
+                            <Form.Control.Feedback type="invalid">
+                                Email can't be empty
+                            </Form.Control.Feedback>
 
-                    </Form.Group>
+                        </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control onChange={handlePasswordChange} required type="password" placeholder="Password" />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="ConfirmformBasicPassword">
-                        <Form.Label>Confirm Password</Form.Label>
-                        <Form.Control onChange={handleConfirmPasswordChange} required type="password" placeholder="Confirm password" />
-                        {errors?.password && <p className="text-danger">{errors.password}</p>}
-                    </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control onChange={handlePasswordChange} required type="password" placeholder="Password" />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="ConfirmformBasicPassword">
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control onChange={handleConfirmPasswordChange} required type="password" placeholder="Confirm password" />
+                            {errors?.password && <p className="text-danger">{errors.password}</p>}
+                        </Form.Group>
 
 
-                    <button className="d-block mx-auto login-btn" type="submit">
-                        Signup
-                    </button>
-                    <div className="d-flex align-items-center"><p className="text-white mb-0">Don't have an account?</p>
-                        <Button onClick={() => navigate('/login')} variant="link text-white">Login</Button></div>
-                    <div className="or-line-container d-flex justify-content-center align-items-center mx-4">
-                        <div className="or-line"></div>
-                        <h5 className="mx-2">Or</h5>
-                        <div className="or-line"></div>
+                        <button className="d-block mx-auto login-btn w-75" type="submit">
+                            Signup
+                        </button>
+                        <div className="d-flex align-items-center"><p className="text-white mb-0">Don't have an account?</p>
+                            <Button onClick={() => navigate('/login')} variant="link text-white">Login</Button></div>
+                        <div className="or-line-container d-flex justify-content-center align-items-center mx-4">
+                            <div className="or-line"></div>
+                            <h5 className="mx-2">Or</h5>
+                            <div className="or-line"></div>
+                        </div>
+
+
+                    </Form>
+                    <div className="d-flex justify-content-center">
+                        <button onClick={handleGoogleSignIn} className="google-btn me2" ><BsGoogle></BsGoogle>
+
+                        </button>
+                        <button onClick={handleGithubSignIn} className="github-btn ms-2" >
+                            <BsGithub></BsGithub>
+                        </button>
                     </div>
-
-
-                </Form>
-                <div className="d-flex justify-content-center">
-                    <button onClick={handleGoogleSignIn} className="google-btn me2" >
-                        Google
-                    </button>
-                    <button onClick={handleGithubSignIn} className="github-btn ms-2" >
-                        Github
-                    </button>
                 </div>
+
             </div>
 
             <ToastContainer></ToastContainer>

@@ -14,7 +14,7 @@ const Header = () => {
         <div >
             <Navbar className='navbar-container' variant="dark">
                 <Container>
-                    <Navbar.Brand as={Link} className="nav-logo" to="/">Navbar</Navbar.Brand>
+                    <Navbar.Brand as={Link} className="nav-logo" to="/">Pixieco</Navbar.Brand>
                     <Nav className="ms-auto">
                         <Nav.Link as={Link} className="mx-md-2" to="/home">Home</Nav.Link>
                         {/* <Nav.Link as={Link} className="mx-md-2" to="/services">Services</Nav.Link> */}

@@ -5,7 +5,12 @@
 
 }
 
+/* elements inside footer container */
 .footer-para,
 .contact-info p {
     color: #999799;
+}
+
+.contact-info {
+    width: 300px;
 }
